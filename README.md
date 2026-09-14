@@ -1,5 +1,5 @@
 # Prestige USB Toolkit
-PRESTIGE TECH — by Dominik Wasilak — v0.1.0
+PRESTIGE TECH — by Dominik Wasilak — v0.2.0
 
 Przygotowanie katalogu serwisowego PrestigeUSB z narzędziami i manifestem SHA256, bez formatowania.
 
