@@ -15,3 +15,8 @@ Aktualizacja zainstalowanych narzędzi, dziennik, kopia poprzedniej wersji i rol
 - GUI, PDF i samodzielny build EXE.
 - Ograniczony bufor wyników, poprawiona obsługa UTF-8 i zatrzymywania backendu.
 - Konfiguracja testów CI; zależności zachowują oryginalne licencje.
+
+## 0.3.3
+
+- Weryfikacja poprzedniej wersji przed rollbackiem; odmowa dla brakującej, zmienionej lub rozszerzonej kopii.
+- Testy błędów i zachowania danych.

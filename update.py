@@ -3,6 +3,7 @@ from pathlib import Path
 import shutil
 import tempfile
 import uuid
+import re
 from runtime import atomic_json,digest,files,inside,read_json
 
 
@@ -64,6 +65,18 @@ def rollback(directory,execute=False):
     if current not in (journal['original_manifest'],journal.get('updated_manifest')):raise ValueError('Zestaw zmieniono po tej aktualizacji; cofnij najpierw nowszą.')
     for record in journal['tools']:
         name=record['name'];target=inside(root,Path('Tools')/name);saved=inside(directory,name)
+        if not isinstance(name,str) or not re.fullmatch(r'prestige-[A-Za-z0-9_-]+',name):raise ValueError('Nieprawidłowa nazwa narzędzia w dzienniku.')
+        prefix=f'Tools/{name}/'
+        original_hashes={relative[len(prefix):]:expected for relative,expected in journal['original_manifest']['files'].items() if relative.startswith(prefix)}
+        if not original_hashes:raise ValueError('Brak pierwotnego manifestu narzędzia.')
+        original_location=saved if saved.is_dir() else target
+        for relative,expected in original_hashes.items():
+            file=inside(original_location,relative)
+            if not file.is_file() or digest(file)!=expected:raise ValueError('Brak poprawnej kopii poprzedniej wersji; rollback odmówiony.')
+        for file in files(original_location):
+            relative=file.relative_to(original_location)
+            if relative.as_posix() not in original_hashes and relative.parts[0] not in ('logs','reports','__pycache__'):
+                raise ValueError('Niezarządzany plik w poprzedniej wersji; rollback odmówiony.')
         if not saved.exists():continue
         if target.exists():
             for relative,expected in record['installed_hashes'].items():
